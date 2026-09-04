@@ -35,20 +35,9 @@ string rutaNotificaciones = ResolverRutaDatos("notificaciones.log");
 // Composition root: único lugar donde se
 // instancian los adaptadores de persistencia
 
-// Registro de creadores para la carga desde archivo
-// (Factory Method — un tipo de medicamento nuevo es
-// un creador nuevo más una línea aquí, sin tocar
-// RepositorioProductos)
-Dictionary<string, ICreadorMedicamento> creadoresMedicamento =
-    new Dictionary<string, ICreadorMedicamento>
-    {
-        ["capsula"] = new CreadorCapsula(new RellenoGel()),
-        ["liquido"] = new CreadorLiquido(new EnvaseVidrio(), 100)
-    };
-
 ServicioProducto servicioProducto =
     new ServicioProducto(
-        new RepositorioProductos(creadoresMedicamento),
+        new RepositorioProductos(),
         new FabricaMedicamentos());
 
 ServicioCliente servicioCliente =

@@ -5,18 +5,23 @@ using System.Text;
 using System.Threading.Tasks;
 
 using BibFarmacia.Clases;
+using BibFarmacia.Factories;
 using BibFarmacia.Interfaces;
 
 namespace BibFarmacia.Repositorios
 {
     public class RepositorioProductos : IRepositorio<Producto>
     {
-        private readonly IReadOnlyDictionary<string, ICreadorMedicamento> creadores;
+        private readonly IFabricaMedicamentos fabricaMedicamentos;
 
-        public RepositorioProductos(
-            IReadOnlyDictionary<string, ICreadorMedicamento> creadores)
+        public RepositorioProductos()
+            : this(new FabricaMedicamentos())
         {
-            this.creadores = creadores;
+        }
+
+        public RepositorioProductos(IFabricaMedicamentos fabricaMedicamentos)
+        {
+            this.fabricaMedicamentos = fabricaMedicamentos;
         }
 
         public List<Producto> Cargar(
@@ -50,21 +55,28 @@ namespace BibFarmacia.Repositorios
                         "Medellin",
                         "4444444");
 
-                if (!creadores.TryGetValue(
-                    datos[0].ToLowerInvariant(),
-                    out ICreadorMedicamento? creador))
+                Producto producto = datos[0].ToLowerInvariant() switch
                 {
-                    throw new NotSupportedException(
-                        $"Tipo de producto no soportado: {datos[0]}");
-                }
-
-                Producto producto = creador.Crear(
-                    datos[1],
-                    decimal.Parse(datos[2]),
-                    int.Parse(datos[3]),
-                    int.Parse(datos[4]),
-                    DateTime.Parse(datos[5]),
-                    laboratorio);
+                    "capsula" => fabricaMedicamentos.Crear(
+                        datos[1],
+                        decimal.Parse(datos[2]),
+                        int.Parse(datos[3]),
+                        int.Parse(datos[4]),
+                        DateTime.Parse(datos[5]),
+                        laboratorio,
+                        new RellenoGel()),
+                    "liquido" => fabricaMedicamentos.Crear(
+                        datos[1],
+                        decimal.Parse(datos[2]),
+                        int.Parse(datos[3]),
+                        int.Parse(datos[4]),
+                        DateTime.Parse(datos[5]),
+                        laboratorio,
+                        new EnvaseVidrio(),
+                        100),
+                    _ => throw new NotSupportedException(
+                        $"Tipo de producto no soportado: {datos[0]}")
+                };
 
                 productos.Add(producto);
             }
