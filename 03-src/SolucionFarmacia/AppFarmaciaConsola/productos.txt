@@ -1,0 +1,10 @@
+﻿capsula;Dolex;5000;2;5;2025-10-10;MK
+capsula;Ibuprofeno;7000;10;5;2025-11-10;Genfar
+capsula;Amoxicilina;12000;1;5;2025-09-20;Bayer
+liquido;Acetaminofen;4500;8;5;2025-08-15;MK
+capsula;Omeprazol;15000;20;5;2026-01-10;LaSante
+liquido;Loratadina;9000;4;5;2025-07-25;Genfar
+capsula;VitaminaC;6000;15;5;2026-02-11;Nature
+liquido;Diclofenaco;11000;3;5;2025-06-12;Bayer
+capsula;Aspirina;7500;9;5;2025-12-30;MK
+liquido;Naproxeno;13500;7;5;2025-09-01;Genfar

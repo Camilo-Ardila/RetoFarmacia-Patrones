@@ -1,0 +1,4 @@
+Inyectologia;8000;15
+CambioVendajes;12000;20
+CuracionBasica;10000;25
+ControlPresion;5000;10
