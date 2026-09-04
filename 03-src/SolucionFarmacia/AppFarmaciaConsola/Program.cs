@@ -30,12 +30,25 @@ string rutaProductos = ResolverRutaDatos("productos.txt");
 string rutaClientes = ResolverRutaDatos("clientes.txt");
 string rutaUsuarios = ResolverRutaDatos("usuarios.txt");
 string rutaServicios = ResolverRutaDatos("servicios.txt");
+string rutaNotificaciones = ResolverRutaDatos("notificaciones.log");
 
 // Composition root: único lugar donde se
 // instancian los adaptadores de persistencia
+
+// Registro de creadores para la carga desde archivo
+// (Factory Method — un tipo de medicamento nuevo es
+// un creador nuevo más una línea aquí, sin tocar
+// RepositorioProductos)
+Dictionary<string, ICreadorMedicamento> creadoresMedicamento =
+    new Dictionary<string, ICreadorMedicamento>
+    {
+        ["capsula"] = new CreadorCapsula(new RellenoGel()),
+        ["liquido"] = new CreadorLiquido(new EnvaseVidrio(), 100)
+    };
+
 ServicioProducto servicioProducto =
     new ServicioProducto(
-        new RepositorioProductos(),
+        new RepositorioProductos(creadoresMedicamento),
         new FabricaMedicamentos());
 
 ServicioCliente servicioCliente =
@@ -59,8 +72,14 @@ ServicioFacturacion servicioFacturacion =
 ServicioInventario servicioInventario =
     new ServicioInventario();
 
+// Regla de puntos vigente: configuración del
+// administrador para la promoción del día
+// (Strategy — cambiar de ReglaPuntosEstandar a
+// ReglaPuntosDoble es una línea aquí, sin tocar
+// Cliente, ServicioPuntos ni el menú)
 ServicioPuntos servicioPuntos =
-    new ServicioPuntos();
+    new ServicioPuntos(
+        new ReglaPuntosEstandar());
 
 ServicioAutenticacion servicioAutenticacion =
     new ServicioAutenticacion(
@@ -70,6 +89,14 @@ ServicioAutenticacion servicioAutenticacion =
 
 ServicioVenta servicioVenta =
     new ServicioVenta(servicioMovimiento);
+
+// Canal de notificación: observador independiente de
+// la venta, suscrito al mismo evento de dominio que
+// ya consume la consola. No imprime nada — deja
+// evidencia en notificaciones.log — así que no
+// altera la salida por consola.
+IServicioNotificacion servicioNotificacion =
+    new NotificacionArchivo(rutaNotificaciones);
 
 // Registro de estrategias disponibles: agregar un
 // relleno/envase nuevo es una línea aquí, sin tocar
@@ -134,6 +161,15 @@ servicioMovimiento.EventoMovimiento
 
         Console.ResetColor();
     };
+
+// Segundo observador del mismo evento (Observer):
+// el canal de notificación no reemplaza a la
+// consola, coexiste con ella
+servicioMovimiento.EventoMovimiento
+    .MovimientoRegistrado +=
+    mensaje =>
+        servicioNotificacion.EnviarNotificacion(
+            mensaje);
 
 // ================= CARGA TXT =================
 

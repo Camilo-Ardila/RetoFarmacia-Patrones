@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using BibFarmacia.Clases;
 using BibFarmacia.Interfaces;
 
 namespace BibFarmacia.Servicios
@@ -16,6 +17,18 @@ namespace BibFarmacia.Servicios
         {
             return facturable.ObtenerPrecio() *
                 cantidad;
+        }
+
+        public decimal CalcularTotal(
+            IFacturable facturable,
+            int cantidad,
+            Cliente cliente)
+        {
+            decimal subtotal =
+                CalcularTotal(facturable, cantidad);
+
+            return subtotal -
+                cliente.Descuento.CalcularDescuento(subtotal);
         }
     }
 }

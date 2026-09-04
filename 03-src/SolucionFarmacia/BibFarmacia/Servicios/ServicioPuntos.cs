@@ -6,15 +6,21 @@ using System.Threading.Tasks;
 
 using BibFarmacia.Clases;
 using BibFarmacia.Eventos;
+using BibFarmacia.Interfaces;
 
 namespace BibFarmacia.Servicios
 {
     public class ServicioPuntos
     {
+        private readonly IReglaPuntos reglaPuntos;
+
         public EventoPuntos EventoPuntos;
 
-        public ServicioPuntos()
+        public ServicioPuntos(
+            IReglaPuntos reglaPuntos)
         {
+            this.reglaPuntos = reglaPuntos;
+
             EventoPuntos = new EventoPuntos();
         }
 
@@ -22,11 +28,14 @@ namespace BibFarmacia.Servicios
             Cliente cliente,
             int puntos)
         {
-            cliente.AcumularPuntos(puntos);
+            int puntosCalculados =
+                reglaPuntos.Calcular(puntos);
+
+            cliente.AcumularPuntos(puntosCalculados);
 
             EventoPuntos.Disparar(
                 cliente.Nombre,
-                puntos);
+                puntosCalculados);
         }
     }
 }

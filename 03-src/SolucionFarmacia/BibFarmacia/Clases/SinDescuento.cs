@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 using BibFarmacia.Interfaces;
 
-namespace BibFarmacia.Servicios
+namespace BibFarmacia.Clases
 {
-    public class ServicioDescuento : IDescuento
+    public class SinDescuento : IDescuento
     {
         public decimal CalcularDescuento(decimal precio)
         {
-            return precio * 0.10m;
+            return 0m;
         }
     }
 }
