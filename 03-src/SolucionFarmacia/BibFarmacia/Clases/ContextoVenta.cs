@@ -1,16 +1,8 @@
+using BibFarmacia.Clases.EstadosVenta;
 using BibFarmacia.Interfaces;
 
 namespace BibFarmacia.Clases
 {
-    public enum EstadoVenta
-    {
-        Pendiente,
-        Facturada,
-        Procesada,
-        Confirmada,
-        Fallida
-    }
-
     public class ContextoVenta
     {
         public Cliente Cliente { get; }
@@ -19,8 +11,11 @@ namespace BibFarmacia.Clases
         public decimal Subtotal { get; set; }
         public decimal Descuento { get; set; }
         public decimal Total { get; set; }
-        public EstadoVenta Estado { get; set; }
+        public IEstadoVenta Estado { get; private set; }
         public string? Error { get; set; }
+
+        public bool EstaConfirmada =>
+            Estado is EstadoVentaConfirmada;
 
         public ContextoVenta(
             Cliente cliente,
@@ -32,13 +27,26 @@ namespace BibFarmacia.Clases
             Cantidad = cantidad > 0
                 ? cantidad
                 : throw new ArgumentOutOfRangeException(nameof(cantidad));
-            Estado = EstadoVenta.Pendiente;
+            Estado = new EstadoVentaPendiente();
         }
+
+        public void Facturar() => Estado.Facturar(this);
+
+        public void Procesar() => Estado.Procesar(this);
+
+        public void Confirmar() => Estado.Confirmar(this);
 
         public void Fallar(string mensaje)
         {
-            Error = mensaje;
-            Estado = EstadoVenta.Fallida;
+            Estado.Fallar(this, mensaje);
+        }
+
+        internal void CambiarEstado(
+            IEstadoVenta estado,
+            string? error = null)
+        {
+            Estado = estado;
+            Error = error;
         }
     }
 }

@@ -41,7 +41,7 @@ namespace BibFarmacia.Servicios
                 contexto.Subtotal = subtotal;
                 contexto.Descuento = descuento;
                 contexto.Total = subtotal - descuento;
-                contexto.Estado = EstadoVenta.Facturada;
+                contexto.Facturar();
 
                 eventoVenta
                     .DispararFacturaCalculada(contexto);

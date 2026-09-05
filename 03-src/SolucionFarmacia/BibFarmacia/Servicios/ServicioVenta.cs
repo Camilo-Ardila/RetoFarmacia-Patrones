@@ -44,7 +44,7 @@ namespace BibFarmacia.Servicios
                 eventoVenta
                     .DispararVentaSolicitada(contexto);
 
-                return contexto.Estado == EstadoVenta.Confirmada
+                return contexto.EstaConfirmada
                     ? $"Venta registrada. Total: {contexto.Total}"
                     : $"Venta no registrada: {contexto.Error}";
             }

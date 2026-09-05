@@ -33,7 +33,7 @@ namespace BibFarmacia.Servicios
                     contexto.Total);
 
             movimientos.Add(movimiento);
-            contexto.Estado = EstadoVenta.Confirmada;
+            contexto.Confirmar();
             eventoVenta.DispararMovimientoRegistrado(contexto);
         }
 

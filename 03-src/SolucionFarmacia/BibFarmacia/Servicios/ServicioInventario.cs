@@ -33,7 +33,7 @@ namespace BibFarmacia.Servicios
                     inventariable.DescontarStock(contexto.Cantidad);
                 }
 
-                contexto.Estado = EstadoVenta.Procesada;
+                contexto.Procesar();
                 eventoVenta.DispararVentaProcesada(contexto);
             }
             catch (Exception ex)
