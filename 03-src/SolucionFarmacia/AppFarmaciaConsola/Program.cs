@@ -1,5 +1,6 @@
 using BibFarmacia.Auth;
 using BibFarmacia.Clases;
+using BibFarmacia.Eventos;
 using BibFarmacia.Factories;
 using BibFarmacia.Interfaces;
 using BibFarmacia.Repositorios;
@@ -32,13 +33,31 @@ string rutaUsuarios = ResolverRutaDatos("usuarios.txt");
 string rutaServicios = ResolverRutaDatos("servicios.txt");
 string rutaNotificaciones = ResolverRutaDatos("notificaciones.log");
 
+EventoVenta eventoVenta =
+    new EventoVenta();
+
 // Composition root: único lugar donde se
 // instancian los adaptadores de persistencia
 
+FabricaMedicamentos fabricaMedicamentos =
+    new FabricaMedicamentos();
+
+Dictionary<string, ICreadorMedicamento> creadoresMedicamento =
+    new Dictionary<string, ICreadorMedicamento>
+    {
+        ["capsula"] = new CreadorCapsula(
+            fabricaMedicamentos,
+            new RellenoGel()),
+        ["liquido"] = new CreadorLiquido(
+            fabricaMedicamentos,
+            new EnvaseVidrio(),
+            100)
+    };
+
 ServicioProducto servicioProducto =
     new ServicioProducto(
-        new RepositorioProductos(),
-        new FabricaMedicamentos());
+        new RepositorioProductos(creadoresMedicamento),
+        fabricaMedicamentos);
 
 ServicioCliente servicioCliente =
     new ServicioCliente(
@@ -49,17 +68,17 @@ ServicioUsuario servicioUsuario =
         new RepositorioUsuarios());
 
 ServicioMovimiento servicioMovimiento =
-    new ServicioMovimiento();
+    new ServicioMovimiento(eventoVenta);
 
 ServicioObjetoServicio servicioObjetoServicio =
     new ServicioObjetoServicio(
         new RepositorioServicios());
 
 ServicioFacturacion servicioFacturacion =
-    new ServicioFacturacion();
+    new ServicioFacturacion(eventoVenta);
 
 ServicioInventario servicioInventario =
-    new ServicioInventario();
+    new ServicioInventario(eventoVenta);
 
 // Regla de puntos vigente: configuración del
 // administrador para la promoción del día
@@ -77,7 +96,22 @@ ServicioAutenticacion servicioAutenticacion =
             rutaUsuarios));
 
 ServicioVenta servicioVenta =
-    new ServicioVenta(servicioMovimiento);
+    new ServicioVenta(eventoVenta);
+
+FormateadorProducto formateadorProducto =
+    new FormateadorProducto();
+
+eventoVenta.VentaSolicitada +=
+    servicioFacturacion.ProcesarVentaSolicitada;
+
+eventoVenta.FacturaCalculada +=
+    servicioInventario.ProcesarFacturaCalculada;
+
+eventoVenta.VentaProcesada +=
+    servicioMovimiento.ProcesarVentaProcesada;
+
+eventoVenta.MovimientoRegistrado +=
+    servicioPuntos.ProcesarMovimientoRegistrado;
 
 // Canal de notificación: observador independiente de
 // la venta, suscrito al mismo evento de dominio que
@@ -139,14 +173,14 @@ servicioPuntos.EventoPuntos.PuntosAcumulados +=
         Console.ResetColor();
     };
 
-servicioMovimiento.EventoMovimiento
-    .MovimientoRegistrado +=
+eventoVenta.MovimientoRegistrado +=
     mensaje =>
     {
         Console.ForegroundColor =
             ConsoleColor.Cyan;
 
-        Console.WriteLine(mensaje);
+        Console.WriteLine(
+            $"Movimiento registrado: Venta");
 
         Console.ResetColor();
     };
@@ -154,11 +188,21 @@ servicioMovimiento.EventoMovimiento
 // Segundo observador del mismo evento (Observer):
 // el canal de notificación no reemplaza a la
 // consola, coexiste con ella
-servicioMovimiento.EventoMovimiento
-    .MovimientoRegistrado +=
-    mensaje =>
-        servicioNotificacion.EnviarNotificacion(
-            mensaje);
+eventoVenta.MovimientoRegistrado +=
+    contexto =>
+    {
+        try
+        {
+            servicioNotificacion.EnviarNotificacion(
+                $"Venta registrada: {contexto.Facturable.Nombre} " +
+                $"x{contexto.Cantidad} - Total: {contexto.Total}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(
+                $"No se pudo enviar la notificación: {ex.Message}");
+        }
+    };
 
 // ================= CARGA TXT =================
 
@@ -295,7 +339,7 @@ while (opcion != 11)
                 servicioProducto.ObtenerProductos())
             {
                 Console.WriteLine(
-                    producto.MostrarInformacion());
+                    formateadorProducto.Formatear(producto));
             }
 
             break;
@@ -372,7 +416,7 @@ while (opcion != 11)
                     $"{categoria} - " +
                     $"{movimiento.Facturable.Nombre} " +
                     $"x{movimiento.Cantidad} - " +
-                    $"Total: {servicioFacturacion.CalcularTotal(movimiento.Facturable, movimiento.Cantidad)}");
+                        $"Total: {movimiento.Total}");
             }
 
             break;
@@ -639,9 +683,32 @@ while (opcion != 11)
                     int.Parse(
                         Console.ReadLine()!);
 
+                Console.Write(
+                    "Nombre cliente: ");
+
+                string nombreClienteVenta =
+                    Console.ReadLine()!;
+
+                Cliente? clienteVenta =
+                    servicioCliente
+                    .ObtenerClientes()
+                    .FirstOrDefault(c =>
+                        c.Nombre.ToLower()
+                        .Contains(
+                            nombreClienteVenta.ToLower()));
+
+                if (clienteVenta == null)
+                {
+                    Console.WriteLine(
+                        "\nCliente no encontrado");
+
+                    break;
+                }
+
                 Console.WriteLine(
                     "\n" +
                     servicioVenta.RegistrarVenta(
+                        clienteVenta,
                         facturableVenta,
                         cantidad));
             }

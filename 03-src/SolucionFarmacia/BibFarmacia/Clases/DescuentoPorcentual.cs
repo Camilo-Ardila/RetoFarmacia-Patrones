@@ -14,7 +14,11 @@ namespace BibFarmacia.Clases
 
         public DescuentoPorcentual(decimal porcentaje)
         {
-            this.porcentaje = porcentaje;
+            this.porcentaje = porcentaje >= 0 && porcentaje <= 1
+                ? porcentaje
+                : throw new ArgumentOutOfRangeException(
+                    nameof(porcentaje),
+                    "El porcentaje debe estar entre 0 y 1.");
         }
 
         public decimal CalcularDescuento(decimal precio)

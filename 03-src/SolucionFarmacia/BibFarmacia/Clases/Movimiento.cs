@@ -14,6 +14,7 @@ namespace BibFarmacia.Clases
         private int cantidad;
         private string tipo = string.Empty;
         private IFacturable facturable = null!;
+        private Cliente cliente = null!;
 
         public DateTime Fecha
         {
@@ -47,15 +48,35 @@ namespace BibFarmacia.Clases
                 : throw new ArgumentNullException(nameof(value));
         }
 
+        public Cliente Cliente
+        {
+            get => cliente;
+            set => cliente = value is not null
+                ? value
+                : throw new ArgumentNullException(nameof(value));
+        }
+
+        public decimal Subtotal { get; }
+        public decimal Descuento { get; }
+        public decimal Total { get; }
+
         public Movimiento(DateTime fecha,
             int cantidad,
             string tipo,
-            IFacturable facturable)
+            IFacturable facturable,
+            Cliente cliente,
+            decimal subtotal,
+            decimal descuento,
+            decimal total)
         {
             Fecha = fecha;
             Cantidad = cantidad;
             Tipo = tipo;
             Facturable = facturable;
+            Cliente = cliente;
+            Subtotal = subtotal;
+            Descuento = descuento;
+            Total = total;
         }
     }
 }

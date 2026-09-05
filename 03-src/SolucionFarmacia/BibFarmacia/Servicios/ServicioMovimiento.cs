@@ -5,31 +5,36 @@ using System.Text;
 using System.Threading.Tasks;
 using BibFarmacia.Clases;
 using BibFarmacia.Eventos;
-using BibFarmacia.Interfaces;
 
 namespace BibFarmacia.Servicios
 {
-    public class ServicioMovimiento : IRegistroMovimientos
+    public class ServicioMovimiento
     {
         private List<Movimiento> movimientos;
+        private readonly EventoVenta eventoVenta;
 
-        public EventoMovimiento EventoMovimiento;
-
-        public ServicioMovimiento()
+        public ServicioMovimiento(EventoVenta eventoVenta)
         {
+            this.eventoVenta = eventoVenta;
             movimientos = new List<Movimiento>();
-
-            EventoMovimiento =
-                new EventoMovimiento();
         }
 
-        public void RegistrarMovimiento(
-            Movimiento movimiento)
+        public void ProcesarVentaProcesada(ContextoVenta contexto)
         {
-            movimientos.Add(movimiento);
+            Movimiento movimiento =
+                new Movimiento(
+                    DateTime.Now,
+                    contexto.Cantidad,
+                    "Venta",
+                    contexto.Facturable,
+                    contexto.Cliente,
+                    contexto.Subtotal,
+                    contexto.Descuento,
+                    contexto.Total);
 
-            EventoMovimiento.Disparar(
-                movimiento.Tipo);
+            movimientos.Add(movimiento);
+            contexto.Estado = EstadoVenta.Confirmada;
+            eventoVenta.DispararMovimientoRegistrado(contexto);
         }
 
         public List<Movimiento>

@@ -47,11 +47,6 @@ namespace BibFarmacia.Clases
             DuracionMinutos = duracionMinutos;
         }
 
-        public decimal ObtenerPrecio()
-        {
-            return Precio;
-        }
-
         public string MostrarInformacion()
         {
             return $"{Nombre}\t{Precio}\t" +

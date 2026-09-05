@@ -10,7 +10,5 @@ namespace BibFarmacia.Interfaces
     {
         string Nombre { get; }
         decimal Precio { get; }
-
-        decimal ObtenerPrecio();
     }
 }

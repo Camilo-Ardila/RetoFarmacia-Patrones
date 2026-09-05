@@ -24,6 +24,28 @@ namespace BibFarmacia.Servicios
             EventoPuntos = new EventoPuntos();
         }
 
+        public void ProcesarMovimientoRegistrado(
+            ContextoVenta contexto)
+        {
+            try
+            {
+                int puntosBase =
+                    Math.Max(
+                        1,
+                        (int)Math.Floor(
+                            contexto.Total / 1000m));
+
+                AcumularPuntos(
+                    contexto.Cliente,
+                    puntosBase);
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine(
+                    $"No se pudieron acumular puntos: {ex.Message}");
+            }
+        }
+
         public void AcumularPuntos(
             Cliente cliente,
             int puntos)

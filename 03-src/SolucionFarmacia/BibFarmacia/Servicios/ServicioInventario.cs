@@ -6,18 +6,40 @@ using System.Threading.Tasks;
 
 using BibFarmacia.Clases;
 using BibFarmacia.Eventos;
+using BibFarmacia.Interfaces;
 
 namespace BibFarmacia.Servicios
 {
     public class ServicioInventario
     {
+        private readonly EventoVenta eventoVenta;
+
         public EventoStockMinimo EventoStock;
         public EventoVencimiento EventoVencimiento;
 
-        public ServicioInventario()
+        public ServicioInventario(EventoVenta eventoVenta)
         {
+            this.eventoVenta = eventoVenta;
             EventoStock = new EventoStockMinimo();
             EventoVencimiento = new EventoVencimiento();
+        }
+
+        public void ProcesarFacturaCalculada(ContextoVenta contexto)
+        {
+            try
+            {
+                if (contexto.Facturable is IInventariable inventariable)
+                {
+                    inventariable.DescontarStock(contexto.Cantidad);
+                }
+
+                contexto.Estado = EstadoVenta.Procesada;
+                eventoVenta.DispararVentaProcesada(contexto);
+            }
+            catch (Exception ex)
+            {
+                contexto.Fallar(ex.Message);
+            }
         }
 
         public void VerificarStock(

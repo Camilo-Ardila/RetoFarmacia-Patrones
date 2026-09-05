@@ -27,3 +27,8 @@ artifacts/
 # Operating system files
 .DS_Store
 Thumbs.db
+
+# Local implementation plans
+PLAN-IMPLEMENTACION-PATRONES.md
+PLAN-FLUJO-VENTA-EVENTOS.md
+COMPARACION-BIBLIOTECA-ACTUAL-VS-ANTERIOR.md

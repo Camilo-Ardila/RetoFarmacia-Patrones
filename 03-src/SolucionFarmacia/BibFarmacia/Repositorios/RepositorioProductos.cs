@@ -12,16 +12,12 @@ namespace BibFarmacia.Repositorios
 {
     public class RepositorioProductos : IRepositorio<Producto>
     {
-        private readonly IFabricaMedicamentos fabricaMedicamentos;
+        private readonly IReadOnlyDictionary<string, ICreadorMedicamento> creadores;
 
-        public RepositorioProductos()
-            : this(new FabricaMedicamentos())
+        public RepositorioProductos(
+            IReadOnlyDictionary<string, ICreadorMedicamento> creadores)
         {
-        }
-
-        public RepositorioProductos(IFabricaMedicamentos fabricaMedicamentos)
-        {
-            this.fabricaMedicamentos = fabricaMedicamentos;
+            this.creadores = creadores;
         }
 
         public List<Producto> Cargar(
@@ -55,28 +51,21 @@ namespace BibFarmacia.Repositorios
                         "Medellin",
                         "4444444");
 
-                Producto producto = datos[0].ToLowerInvariant() switch
+                if (!creadores.TryGetValue(
+                    datos[0].ToLowerInvariant(),
+                    out ICreadorMedicamento? creador))
                 {
-                    "capsula" => fabricaMedicamentos.Crear(
-                        datos[1],
-                        decimal.Parse(datos[2]),
-                        int.Parse(datos[3]),
-                        int.Parse(datos[4]),
-                        DateTime.Parse(datos[5]),
-                        laboratorio,
-                        new RellenoGel()),
-                    "liquido" => fabricaMedicamentos.Crear(
-                        datos[1],
-                        decimal.Parse(datos[2]),
-                        int.Parse(datos[3]),
-                        int.Parse(datos[4]),
-                        DateTime.Parse(datos[5]),
-                        laboratorio,
-                        new EnvaseVidrio(),
-                        100),
-                    _ => throw new NotSupportedException(
-                        $"Tipo de producto no soportado: {datos[0]}")
-                };
+                    throw new NotSupportedException(
+                        $"Tipo de producto no soportado: {datos[0]}");
+                }
+
+                Producto producto = creador.Crear(
+                    datos[1],
+                    decimal.Parse(datos[2]),
+                    int.Parse(datos[3]),
+                    int.Parse(datos[4]),
+                    DateTime.Parse(datos[5]),
+                    laboratorio);
 
                 productos.Add(producto);
             }

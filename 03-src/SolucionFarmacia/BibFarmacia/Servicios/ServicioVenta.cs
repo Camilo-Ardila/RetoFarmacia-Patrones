@@ -5,18 +5,18 @@ using System.Text;
 using System.Threading.Tasks;
 
 using BibFarmacia.Clases;
+using BibFarmacia.Eventos;
 using BibFarmacia.Interfaces;
 
 namespace BibFarmacia.Servicios
 {
     public class ServicioVenta
     {
-        private readonly IRegistroMovimientos registroMovimientos;
+        private readonly EventoVenta eventoVenta;
 
-        public ServicioVenta(
-            IRegistroMovimientos registroMovimientos)
+        public ServicioVenta(EventoVenta eventoVenta)
         {
-            this.registroMovimientos = registroMovimientos;
+            this.eventoVenta = eventoVenta;
         }
 
         public IFacturable? BuscarFacturable(
@@ -29,27 +29,29 @@ namespace BibFarmacia.Servicios
         }
 
         public string RegistrarVenta(
+            Cliente cliente,
             IFacturable facturable,
             int cantidad)
         {
-            if (facturable is
-                IInventariable inventariable)
+            try
             {
-                inventariable
-                    .DescontarStock(cantidad);
+                ContextoVenta contexto =
+                    new ContextoVenta(
+                        cliente,
+                        facturable,
+                        cantidad);
+
+                eventoVenta
+                    .DispararVentaSolicitada(contexto);
+
+                return contexto.Estado == EstadoVenta.Confirmada
+                    ? $"Venta registrada. Total: {contexto.Total}"
+                    : $"Venta no registrada: {contexto.Error}";
             }
-
-            Movimiento venta =
-                new Movimiento(
-                    DateTime.Now,
-                    cantidad,
-                    "Venta",
-                    facturable);
-
-            registroMovimientos
-                .RegistrarMovimiento(venta);
-
-            return "Venta registrada";
+            catch (Exception ex)
+            {
+                return $"Venta no registrada: {ex.Message}";
+            }
         }
     }
 }

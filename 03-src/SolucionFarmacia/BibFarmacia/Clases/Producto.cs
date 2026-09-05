@@ -69,11 +69,6 @@ namespace BibFarmacia.Clases
             FechaVencimiento = fechaVencimiento;
         }
 
-        public decimal ObtenerPrecio()
-        {
-            return Precio;
-        }
-
         public void DescontarStock(int cantidad)
         {
             Stock = cantidad > 0 && cantidad <= Stock
@@ -81,9 +76,5 @@ namespace BibFarmacia.Clases
                 : throw new ArgumentOutOfRangeException(nameof(cantidad), "La cantidad debe ser positiva y no superar el stock disponible.");
         }
 
-        public virtual string MostrarInformacion()
-        {
-            return $"{Nombre}\t\t{Stock}\t{Precio}";
-        }
     }
 }
