@@ -11,11 +11,11 @@ namespace BibFarmacia.Servicios
     public class ServicioProducto
     {
         private readonly List<Producto> productos;
-        private readonly IRepositorio<Producto> repositorio;
+        private readonly IRepositorio<RegistroProducto> repositorio;
         private readonly IFabricaMedicamentos fabricaMedicamentos;
 
         public ServicioProducto(
-            IRepositorio<Producto> repositorio,
+            IRepositorio<RegistroProducto> repositorio,
             IFabricaMedicamentos fabricaMedicamentos)
         {
             this.repositorio = repositorio;
@@ -91,8 +91,12 @@ namespace BibFarmacia.Servicios
         {
             try
             {
-                productos.AddRange(
-                    repositorio.Cargar(ruta));
+                foreach (RegistroProducto registro in
+                    repositorio.Cargar(ruta))
+                {
+                    productos.Add(
+                        fabricaMedicamentos.Crear(registro));
+                }
 
                 return "Productos cargados";
             }

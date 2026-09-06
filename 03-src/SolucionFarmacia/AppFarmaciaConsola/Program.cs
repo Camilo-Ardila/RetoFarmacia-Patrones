@@ -40,23 +40,14 @@ EventoVenta eventoVenta =
 // instancian los adaptadores de persistencia
 
 FabricaMedicamentos fabricaMedicamentos =
-    new FabricaMedicamentos();
-
-Dictionary<string, ICreadorMedicamento> creadoresMedicamento =
-    new Dictionary<string, ICreadorMedicamento>
-    {
-        ["capsula"] = new CreadorCapsula(
-            fabricaMedicamentos,
-            new RellenoGel()),
-        ["liquido"] = new CreadorLiquido(
-            fabricaMedicamentos,
-            new EnvaseVidrio(),
-            100)
-    };
+    new FabricaMedicamentos(
+        new RellenoGel(),
+        new EnvaseVidrio(),
+        100);
 
 ServicioProducto servicioProducto =
     new ServicioProducto(
-        new RepositorioProductos(creadoresMedicamento),
+        new RepositorioProductos(),
         fabricaMedicamentos);
 
 ServicioCliente servicioCliente =

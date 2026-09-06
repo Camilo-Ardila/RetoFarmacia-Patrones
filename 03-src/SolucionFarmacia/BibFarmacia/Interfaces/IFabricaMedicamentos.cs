@@ -4,6 +4,8 @@ namespace BibFarmacia.Interfaces
 {
     public interface IFabricaMedicamentos
     {
+        Medicamento Crear(RegistroProducto registro);
+
         MedicamentoCapsula Crear(
             string nombre,
             decimal precio,
