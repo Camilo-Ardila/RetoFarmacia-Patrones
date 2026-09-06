@@ -15,7 +15,7 @@ namespace BibFarmacia.Clases
         public string? Error { get; set; }
 
         public bool EstaConfirmada =>
-            Estado is EstadoVentaConfirmada;
+            Estado is Confirmada;
 
         public ContextoVenta(
             Cliente cliente,
@@ -27,7 +27,7 @@ namespace BibFarmacia.Clases
             Cantidad = cantidad > 0
                 ? cantidad
                 : throw new ArgumentOutOfRangeException(nameof(cantidad));
-            Estado = new EstadoVentaPendiente();
+            Estado = new Pendiente();
         }
 
         public void Facturar() => Estado.Facturar(this);
