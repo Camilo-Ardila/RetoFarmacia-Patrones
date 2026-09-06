@@ -30,6 +30,8 @@ Las escalas se definen para que la exposición no sea una opinión. Igual que en
 
 **Exposición (Exp) = P × I.** El registro está ordenado de mayor a menor exposición.
 
+> **Vigencia.** El registro de la sección 5.1 se levantó **antes** de ejecutar la implementación (commit `123b525`) y **no se reescribe hacia atrás**: sus valores de P e I documentan lo que se sabía en ese momento, y fue ese orden el que mandó sobre el plan de trabajo. Lo que ocurrió después se registra en la sección **Seguimiento al cierre de la implementación**, junto con la exposición residual y los riesgos nuevos.
+
 ---
 
 ## Entregable 5.1 — Registro de riesgos
@@ -45,13 +47,13 @@ Las escalas se definen para que la exposición no sea una opinión. Igual que en
 | **R-07** | Si se da de alta un convenio con el porcentaje mal expresado —un 15 % tecleado como 15 en vez de 0,15—, entonces el descuento calculado supera al precio y el total facturado sale negativo: ni la clase de descuento porcentual valida su porcentaje al construirse, ni el contrato de descuento declara que el descuento no puede exceder el precio. | 3 | 4 | **12** | Validar el porcentaje en el constructor (intervalo cerrado de 0 a 1) y declarar en el contrato el límite que hoy no está escrito: el descuento nunca supera el precio. Ambas cosas antes de que exista el primer convenio real, no después. | Un total menor o igual a cero en el historial de movimientos. En verificación: un caso que construya un descuento con porcentaje 1,5 y no falle es la señal de que la validación sigue ausente. |
 | **R-08** | Si al cerrar el cálculo del importe se decide introducir una capa de aplicación, un contenedor de inyección de dependencias o una reescritura del flujo de venta, entonces el trabajo deja de ser lo que se encargó —cómo colaboran los objetos del back que ya existe— y se convierte en un cambio de estilo arquitectónico que la Dirección rechazó de entrada. | 2 | 5 | **10** | El cambio de P-04 se acota por escrito: la venta recibe la facturación y el cliente y devuelve un resultado con subtotal, descuento y total. Nada más. El ensamblaje sigue siendo manual, en el mismo archivo de siempre, sin biblioteca externa. Toda propuesta que agregue una capa o una dependencia nueva se rechaza por regla y no por criterio. | Aparece una referencia a paquete nueva en cualquier archivo de proyecto, o un proyecto nuevo en la solución. Ambas cosas se revisan antes de cada entrega. |
 
-**Ocho riesgos registrados** (el mínimo exigido es tres). Exposición total 106; los tres primeros concentran 52.
+**Ocho riesgos registrados** en el análisis inicial (el mínimo exigido es tres). Exposición total 106; los tres primeros concentran 52. El seguimiento agrega dos más, R-09 y R-10, surgidos de la implementación.
 
 ---
 
-## Anclaje en el código
+## Anclaje en el código, en el momento del análisis
 
-Evidencia por riesgo, para poder defenderlo con el archivo abierto durante la sustentación. Las líneas corresponden al estado actual de `RetoFarmacia-Patrones/03-src/SolucionFarmacia/`.
+Evidencia por riesgo tal como se levantó. Las líneas corresponden al estado del código en el commit `123b525`, **no al actual**: varias de ellas ya no existen, precisamente porque las mitigaciones se ejecutaron. El anclaje vigente está en la columna de evidencia del seguimiento.
 
 | ID | Evidencia |
 |---|---|
@@ -66,14 +68,50 @@ Evidencia por riesgo, para poder defenderlo con el archivo abierto durante la su
 
 ---
 
+## Seguimiento al cierre de la implementación
+
+Estado de cada riesgo tras ejecutar los cambios (commits `d7e7d12`, `84bf4d5`, `e994403`). Las líneas de la columna de evidencia corresponden al **código actual**.
+
+| ID | Estado | Qué pasó | Evidencia vigente | Exp |
+|---|---|---|---|:-:|
+| **R-01** | **Cerrado** | Se respetó el orden que el riesgo imponía: primero P-04, después P-03. La venta calcula subtotal, descuento y total, el movimiento los conserva y el historial lee el total guardado en vez de recalcularlo. La sobrecarga que no tenía llamadas hoy se invoca en toda venta. | `Servicios/ServicioFacturacion.cs:22-53` · `Clases/Movimiento.cs:59-61` · `Program.cs:410` | 20 → **5** |
+| **R-02** | **Cerrado** | El repositorio de productos dejó de fabricar: devuelve un registro plano y quien decide qué clase nace es la fábrica, que recibe sus valores por defecto del ensamblaje. Ya no hay una sola construcción de clase concreta fuera del punto de ensamblaje. | `Repositorios/RepositorioProductos.cs` (sin un solo `new` de dominio) · `Servicios/ServicioProducto.cs:98` · `Program.cs:42-45` | 16 → **4** |
+| **R-03** | **Se materializó, y se corrigió** | Ocurrió exactamente como estaba descrito: el código avanzó después de escritas las dos vistas y los documentos quedaron describiendo un sistema que ya no existía. La revisión de correspondencia lo detectó y las dos vistas se rehicieron completas. **Los diagramas `.dia` del TO-BE siguen sin revisar contra el código actual**, y el código incorporó un patrón nuevo que no está dibujado. | `DiagramasUML/TO-BE/` frente a `BibFarmacia/**/*.cs` · `Clases/EstadosVenta/` y `Eventos/EventoVenta.cs`, sin representación en el diagrama | **16** |
+| **R-04** | **Cerrado** | Cada suscriptor absorbe su propia falla, y los servicios de la cadena convierten el error en un estado de venta fallida en vez de dejarlo subir. Un canal de avisos caído degrada el aviso, nunca la operación. | `Program.cs:182-195` (suscripción con su propio `try/catch`) · `Servicios/ServicioPuntos.cs:42-46` · `Servicios/ServicioFacturacion.cs:49-52` · `Servicios/ServicioInventario.cs:39-42` | 15 → **5** |
+| **R-05** | **Vigente, y ampliado** | Sigue vigente para la regla de puntos, que se entrega en su versión estándar. Pero apareció una arista nueva: la salida de la pantalla de venta **sí cambió**, con autorización de la solicitud de convenios, así que la comparación de salidas dejó de ser "todo idéntico". El riesgo ya no es solo dejar algo cableado por error, sino **que una diferencia no autorizada se confunda con una autorizada**. | `Program.cs:81` (regla estándar) · las cuatro diferencias autorizadas están enumeradas una por una en la regla 1 de la vista técnica | **15** |
+| **R-06** | **Parcialmente cerrado** | El camino caro se blindó: vender más de lo que hay ya no termina la aplicación, responde y sigue, y la existencia no queda a medio descontar porque la validación ocurre antes. Siguen abiertos los otros dos —acumular cero puntos a mano y alta de producto con precio 0— y el menú sigue sin validar la entrada numérica. | Cerrado: `Servicios/ServicioInventario.cs:31-42` · Abierto: `Program.cs:741-744` y `Program.cs:432-565`; `Program.cs` sigue sin un solo `try` | 12 → **9** |
+| **R-07** | **Cerrado** | El porcentaje se valida al construirse, en el intervalo cerrado de 0 a 1, y además la facturación rechaza cualquier descuento negativo o mayor que el subtotal, venga de donde venga. Un 15 tecleado en vez de 0,15 falla al crearse, no al cobrarse. | `Clases/DescuentoPorcentual.cs:17-21` · `Servicios/ServicioFacturacion.cs:35-39` | 12 → **4** |
+| **R-08** | **Cerrado por hecho consumado** | El cambio se acotó como estaba escrito. No se agregó ninguna capa, ningún contenedor y ninguna referencia a paquete externo; la solución sigue con dos proyectos y el ensamblaje sigue siendo manual y en el mismo archivo. | `SolucionFarmacia.sln` (dos proyectos) · los dos `.csproj` sin referencias externas · `Program.cs:39-40` | 10 → **5** |
+
+### Riesgos nuevos, surgidos de la implementación
+
+| ID | Riesgo (si ocurre X, entonces Y) | P | I | Exp | Qué hacen para evitarlo | Cómo se enteran de que está pasando |
+|---|---|:-:|:-:|:-:|---|---|
+| **R-09** | Si se asigna un convenio a una cédula equivocada, o se cablea uno que el negocio no autorizó, entonces un cliente paga menos de lo que le corresponde —o menos que otro igual a él— y no hay forma de notarlo desde la operación: el sistema se comporta con normalidad y el descuento queda correctamente calculado y guardado. Es el riesgo que **reemplaza** a R-01: ya no se cobra un número y se muestra otro, ahora se cobra bien un descuento que no debía existir. | 3 | 5 | **15** | La asignación vive en un solo sitio del ensamblaje y por cédula, así que la lista completa se lee de un vistazo. Se compara contra la lista de entidades autorizada por el negocio antes de cada entrega, y esa lista es un requisito previo a encender el primer convenio. Mientras no llegue, se entrega sin ningún convenio asignado. | Leer el registro de convenios del punto de ensamblaje y contrastarlo, línea por línea, con la lista autorizada. Cualquier cédula que esté en el código y no en la lista, o con distinto porcentaje, es la señal. |
+| **R-10** | Si al agregar una etapa nueva a la venta —reservar, anular— se la coloca después del descuento de existencias y esa etapa falla, entonces la venta termina marcada como fallida pero la existencia ya quedó descontada: el sistema reporta que no vendió y el inventario dice que sí. | 2 | 4 | **8** | Decidir, **antes** de agregar la primera etapa nueva, si el descuento de existencias se mueve al final de la cadena o si el paso a estado fallido devuelve lo descontado. Está declarado en la vista técnica y la fila de la guía de dónde tocar lo exige como condición previa. | Una venta que responde "no registrada" y deja la existencia del producto por debajo de la que tenía antes de intentarla. Se verifica listando productos antes y después de una venta fallida. |
+
+**Exposición residual total: 86.** Los tres primeros de la lista original sumaban 52 y hoy suman 25; el peso se movió a R-03, R-05 y R-09, que son los tres que quedan por encima de 10.
+
+---
+
 ## Qué se hace primero
 
-El orden no lo decide la gravedad sino la dependencia entre riesgos:
+El orden no lo decide la gravedad sino la dependencia entre riesgos. **Este apartado se reordenó al cierre**; el orden original se conserva abajo porque es lo que efectivamente guió el trabajo.
 
-1. **R-01** manda sobre el plan de trabajo: cierra el orden P-04 → P-03 y bloquea el alta de convenios hasta que la venta conserve el importe. Es el único riesgo que, si se ignora, produce un cobro equivocado.
-2. **R-02** tiene que resolverse antes de escribir la primera categoría nueva, no después: es el arreglo de una línea que impide que el punto de dolor P-01 se reproduzca en cada categoría.
-3. **R-04** y **R-05** se cierran con dos revisiones baratas y repetibles (manejo de error en cada suscriptor; comparación de salidas antes de empaquetar) que conviene dejar como paso fijo de la entrega.
-4. **R-03**, **R-06**, **R-07** y **R-08** se vigilan con las señales de la tabla; ninguno exige trabajo por adelantado, pero los cuatro se revisan antes de dar el TO-BE por cerrado.
+**Lo que queda por hacer, en orden:**
+
+1. **R-03** es hoy el de mayor exposición y el único que ya se materializó una vez. Los diagramas del TO-BE no incluyen el patrón de estados ni la cadena de eventos. Hay que rehacerlos y volver a pasar la revisión de correspondencia **antes** de dar la entrega por cerrada.
+2. **R-09** bloquea el último paso de la solicitud de convenios: no se enciende ninguno hasta tener la lista autorizada por el negocio, y la comparación contra esa lista queda como paso fijo de la entrega.
+3. **R-05** cambió de forma y hay que actualizar el procedimiento: la comparación de salidas se corre contra la lista explícita de las cuatro diferencias autorizadas, no contra "todo idéntico".
+4. **R-06** y **R-10** se vigilan con sus señales. Ninguno exige trabajo por adelantado, pero R-10 hay que resolverlo antes de agregar cualquier etapa nueva a la venta.
+5. **R-01, R-02, R-04, R-07 y R-08** quedan cerrados. Se revisan una vez más antes de entregar, con la evidencia de la tabla de seguimiento a la vista.
+
+**El orden original, que sí se siguió:**
+
+1. **R-01** mandó sobre el plan de trabajo: fijó el orden P-04 → P-03 y bloqueó el alta de convenios hasta que la venta conservara el importe. Fue el único riesgo que, si se ignoraba, producía un cobro equivocado. Se ejecutó en ese orden.
+2. **R-02** se resolvió antes de escribir la primera categoría nueva, como exigía: el punto de dolor P-01 no llegó a reproducirse.
+3. **R-04** y **R-05** se cerraron con dos revisiones baratas y repetibles que quedaron como paso fijo de la entrega.
+4. **R-03**, **R-06**, **R-07** y **R-08** se vigilaron con las señales de la tabla.
 
 ## Riesgos que se evaluaron y no entraron al registro
 
@@ -87,8 +125,8 @@ Se descartan por no tener anclaje en este diseño, no por ser improbables:
 
 ## Guion de la sustentación (minuto 14 a 17)
 
-Tres riesgos, cada uno con su señal de alerta, en este orden:
+Tres riesgos, en este orden, contando qué pasó con cada uno. El registro se usó, no se archivó:
 
-1. **R-01**, el que cuesta dinero: *"si habilitamos convenios antes de arreglar el cálculo del importe, cobramos un número y mostramos otro"*. Señal: el total de la venta y el del historial no coinciden.
-2. **R-02**, el que devuelve el problema que vinimos a resolver: *"cada categoría nueva copia el molde y volvemos a tener la decisión repartida"*. Señal: aparece un `new` de una clase concreta dentro de la biblioteca.
-3. **R-04**, el que tumba la operación por algo que no es la operación: *"un aviso que no se pudo escribir se lleva la venta por delante"*. Señal: el archivo de notificaciones deja de crecer mientras siguen entrando movimientos.
+1. **R-01, el que cuesta dinero — cerrado.** *"Si habilitábamos convenios antes de arreglar el cálculo del importe, cobrábamos un número y mostrábamos otro."* Era el de mayor exposición y por eso mandó sobre el orden de trabajo: primero el cobro, después el descuento. Se muestra el código: la venta calcula y guarda, el historial lee lo guardado. La señal —que los dos totales no coincidan— ya no puede dispararse porque **es el mismo número**, no dos cálculos.
+2. **R-09, el que lo reemplaza — vigente.** Cerrar R-01 no eliminó el riesgo de cobrar mal, lo cambió de forma: *"ahora el descuento se calcula bien; lo que puede estar mal es a quién se lo damos"*. Y es más silencioso, porque el sistema se comporta con normalidad. Señal: leer el registro de convenios del ensamblaje contra la lista autorizada por el negocio. Por eso no se entrega ningún convenio encendido.
+3. **R-03, el que se materializó — corregido, y todavía vigente.** *"Si el código avanza y los documentos no, la vista técnica deja de servir para lo único que existe."* Pasó tal cual: el código incorporó un patrón nuevo y las dos vistas quedaron describiendo un sistema que ya no existía. La revisión de correspondencia lo detectó y se rehicieron completas. **Sigue abierto en los diagramas**, y es hoy el de mayor exposición del registro.
