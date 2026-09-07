@@ -12,6 +12,7 @@ namespace BibFarmacia.Servicios
 {
     public class ServicioPuntos
     {
+        private readonly float basePuntos = 1000f;
         private readonly IReglaPuntos reglaPuntos;
 
         public EventoPuntos EventoPuntos;
@@ -33,7 +34,7 @@ namespace BibFarmacia.Servicios
                     Math.Max(
                         1,
                         (int)Math.Floor(
-                            contexto.Total / 1000m));
+                            contexto.Total / (decimal)basePuntos));
 
                 AcumularPuntos(
                     contexto.Cliente,
