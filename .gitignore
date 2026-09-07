@@ -28,7 +28,5 @@ artifacts/
 .DS_Store
 Thumbs.db
 
-# Local implementation plans
-PLAN-IMPLEMENTACION-PATRONES.md
-PLAN-FLUJO-VENTA-EVENTOS.md
+# Local
 COMPARACION-BIBLIOTECA-ACTUAL-VS-ANTERIOR.md
