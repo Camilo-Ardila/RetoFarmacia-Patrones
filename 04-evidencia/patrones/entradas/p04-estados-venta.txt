@@ -1,0 +1,14 @@
+admin
+1234
+9
+1
+amoxicilina
+5
+ana
+9
+1
+ibuprofeno
+1
+zzz
+4
+11

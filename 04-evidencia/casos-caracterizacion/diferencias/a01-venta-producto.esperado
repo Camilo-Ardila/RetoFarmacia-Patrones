@@ -1,0 +1,13 @@
+@@ -40,9 +40,10 @@
+ Seleccione opción: 
+ 1. Producto
+ 2. Servicio
+-Tipo de venta: Nombre producto: Cantidad: Movimiento registrado: Venta
++Tipo de venta: Nombre producto: Cantidad: Nombre cliente: Cliente Ana acumuló 14 puntos
++Movimiento registrado: Venta
+ 
+-Venta registrada
++Venta registrada. Total: 14000
+ 
+ ==============================
+       SISTEMA FARMACIA
