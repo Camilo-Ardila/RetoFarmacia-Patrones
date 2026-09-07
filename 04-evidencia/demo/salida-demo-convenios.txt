@@ -1,0 +1,291 @@
+Cargando información del sistema...
+
+Productos cargados
+Clientes cargados
+Usuarios cargados
+
+=========== LOGIN ===========
+Usuario: Contraseña: 
+Login correcto
+ALERTA: stock mínimo de Dolex
+ALERTA: stock mínimo de Amoxicilina
+ALERTA: stock mínimo de Loratadina
+ALERTA: stock mínimo de Diclofenaco
+ALERTA: Dolex próximo a vencer
+ALERTA: Ibuprofeno próximo a vencer
+ALERTA: Amoxicilina próximo a vencer
+ALERTA: Acetaminofen próximo a vencer
+ALERTA: Omeprazol próximo a vencer
+ALERTA: Loratadina próximo a vencer
+ALERTA: VitaminaC próximo a vencer
+ALERTA: Diclofenaco próximo a vencer
+ALERTA: Aspirina próximo a vencer
+ALERTA: Naproxeno próximo a vencer
+
+==============================
+      SISTEMA FARMACIA
+==============================
+1. Ver productos
+2. Ver servicios
+3. Ver clientes
+4. Ver movimientos
+5. Ver alertas
+6. Agregar producto
+7. Agregar servicio
+8. Buscar producto
+9. Registrar venta
+10. Acumular puntos
+11. Salir
+
+Seleccione opción: 
+Nombre: Precio: Duración (minutos): 
+Servicio agregado
+
+==============================
+      SISTEMA FARMACIA
+==============================
+1. Ver productos
+2. Ver servicios
+3. Ver clientes
+4. Ver movimientos
+5. Ver alertas
+6. Agregar producto
+7. Agregar servicio
+8. Buscar producto
+9. Registrar venta
+10. Acumular puntos
+11. Salir
+
+Seleccione opción: 
+===== SERVICIOS =====
+Nombre		Precio	Duración
+-----------------------------------
+Inyectologia	8000	15 min
+CambioVendajes	12000	20 min
+CuracionBasica	10000	25 min
+ControlPresion	5000	10 min
+Vacunacion	15000	12 min
+
+==============================
+      SISTEMA FARMACIA
+==============================
+1. Ver productos
+2. Ver servicios
+3. Ver clientes
+4. Ver movimientos
+5. Ver alertas
+6. Agregar producto
+7. Agregar servicio
+8. Buscar producto
+9. Registrar venta
+10. Acumular puntos
+11. Salir
+
+Seleccione opción: 
+Tipo (capsula/liquido): Nombre: Precio: Stock: Stock mínimo: Fecha vencimiento (yyyy-MM-dd): Laboratorio - Nombre: Laboratorio - Dirección: Laboratorio - Teléfono: Relleno (gel/polvo): 
+Producto agregado
+
+==============================
+      SISTEMA FARMACIA
+==============================
+1. Ver productos
+2. Ver servicios
+3. Ver clientes
+4. Ver movimientos
+5. Ver alertas
+6. Agregar producto
+7. Agregar servicio
+8. Buscar producto
+9. Registrar venta
+10. Acumular puntos
+11. Salir
+
+Seleccione opción: 
+===== PRODUCTOS =====
+Nombre		Stock	Precio
+-----------------------------------
+Dolex		2	5000
+Ibuprofeno		10	7000
+Amoxicilina		1	12000
+Acetaminofen		8	4500
+Omeprazol		20	15000
+Loratadina		4	9000
+VitaminaC		15	6000
+Diclofenaco		3	11000
+Aspirina		9	7500
+Naproxeno		7	13500
+ParacetamolForte		12	8500
+
+==============================
+      SISTEMA FARMACIA
+==============================
+1. Ver productos
+2. Ver servicios
+3. Ver clientes
+4. Ver movimientos
+5. Ver alertas
+6. Agregar producto
+7. Agregar servicio
+8. Buscar producto
+9. Registrar venta
+10. Acumular puntos
+11. Salir
+
+Seleccione opción: 
+1. Producto
+2. Servicio
+Tipo de venta: Nombre producto: Cantidad: Nombre cliente: Cliente Ana acumuló 15 puntos
+Movimiento registrado: Venta
+
+Venta registrada. Total: 15300
+
+==============================
+      SISTEMA FARMACIA
+==============================
+1. Ver productos
+2. Ver servicios
+3. Ver clientes
+4. Ver movimientos
+5. Ver alertas
+6. Agregar producto
+7. Agregar servicio
+8. Buscar producto
+9. Registrar venta
+10. Acumular puntos
+11. Salir
+
+Seleccione opción: 
+1. Producto
+2. Servicio
+Tipo de venta: Nombre servicio: Cantidad: Nombre cliente: Cliente Ana acumuló 13 puntos
+Movimiento registrado: Venta
+
+Venta registrada. Total: 13500
+
+==============================
+      SISTEMA FARMACIA
+==============================
+1. Ver productos
+2. Ver servicios
+3. Ver clientes
+4. Ver movimientos
+5. Ver alertas
+6. Agregar producto
+7. Agregar servicio
+8. Buscar producto
+9. Registrar venta
+10. Acumular puntos
+11. Salir
+
+Seleccione opción: 
+1. Producto
+2. Servicio
+Tipo de venta: Nombre producto: Cantidad: Nombre cliente: 
+Venta no registrada: La cantidad debe ser positiva y no superar el stock disponible. (Parameter 'cantidad')
+
+==============================
+      SISTEMA FARMACIA
+==============================
+1. Ver productos
+2. Ver servicios
+3. Ver clientes
+4. Ver movimientos
+5. Ver alertas
+6. Agregar producto
+7. Agregar servicio
+8. Buscar producto
+9. Registrar venta
+10. Acumular puntos
+11. Salir
+
+Seleccione opción: 
+1. Producto
+2. Servicio
+Tipo de venta: Nombre producto: Cantidad: Nombre cliente: 
+Cliente no encontrado
+
+==============================
+      SISTEMA FARMACIA
+==============================
+1. Ver productos
+2. Ver servicios
+3. Ver clientes
+4. Ver movimientos
+5. Ver alertas
+6. Agregar producto
+7. Agregar servicio
+8. Buscar producto
+9. Registrar venta
+10. Acumular puntos
+11. Salir
+
+Seleccione opción: 
+Nombre cliente: Puntos: Cliente Ana acumuló 50 puntos
+
+==============================
+      SISTEMA FARMACIA
+==============================
+1. Ver productos
+2. Ver servicios
+3. Ver clientes
+4. Ver movimientos
+5. Ver alertas
+6. Agregar producto
+7. Agregar servicio
+8. Buscar producto
+9. Registrar venta
+10. Acumular puntos
+11. Salir
+
+Seleccione opción: 
+===== CLIENTES =====
+Carlos - Puntos: 0
+Ana - Puntos: 78
+Juan - Puntos: 0
+Maria - Puntos: 0
+Pedro - Puntos: 0
+Laura - Puntos: 0
+Sofia - Puntos: 0
+Camilo - Puntos: 0
+Valentina - Puntos: 0
+Andres - Puntos: 0
+
+==============================
+      SISTEMA FARMACIA
+==============================
+1. Ver productos
+2. Ver servicios
+3. Ver clientes
+4. Ver movimientos
+5. Ver alertas
+6. Agregar producto
+7. Agregar servicio
+8. Buscar producto
+9. Registrar venta
+10. Acumular puntos
+11. Salir
+
+Seleccione opción: 
+===== MOVIMIENTOS =====
+FECHA - Venta - Producto - ParacetamolForte x2 - Total: 15300
+FECHA - Venta - Servicio - Vacunacion x1 - Total: 13500
+
+==============================
+      SISTEMA FARMACIA
+==============================
+1. Ver productos
+2. Ver servicios
+3. Ver clientes
+4. Ver movimientos
+5. Ver alertas
+6. Agregar producto
+7. Agregar servicio
+8. Buscar producto
+9. Registrar venta
+10. Acumular puntos
+11. Salir
+
+Seleccione opción: 
+Saliendo del sistema...
+
+FIN DEL SISTEMA

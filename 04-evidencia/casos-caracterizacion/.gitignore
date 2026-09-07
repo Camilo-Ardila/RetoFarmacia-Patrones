@@ -1,0 +1,4 @@
+*.raw
+
+# Los .diff se regeneran en cada corrida; la referencia versionada es *.esperado
+*.diff
